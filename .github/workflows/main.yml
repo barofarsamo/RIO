@@ -1,4 +1,4 @@
-name: Android CI/CD
+name: Android CI/CD Full
 
 on:
   push:
@@ -9,100 +9,100 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
-      
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      
-      - name: Build with Gradle
-        run: ./gradlew build
-      
-      - name: Upload APK
+
+      - name: Build Debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: app/build/outputs/apk/debug/
-      
-      - name: Upload mapping
-        if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: mapping
-          path: app/build/outputs/mapping/
+          path: android/app/build/outputs/apk/debug/
 
   test:
     runs-on: ubuntu-latest
-    
+    needs: build
+
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-      
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      
-      - name: Run tests
-        run: ./gradlew test
+
+      - uses: android-actions/setup-android@v2
+
+      - name: Run Unit Tests
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew test
 
   deploy:
-    needs: [build, test]
     runs-on: ubuntu-latest
+    needs: [build, test]
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-      
+
+      - uses: android-actions/setup-android@v2
+
       - name: Decode keystore
+        working-directory: android
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
-      
-      - name: Build release APK
+
+      - name: Build Release APK & AAB
+        working-directory: android
         run: |
-          ./gradlew assembleRelease \
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease \
             -PstorePassword="${{ secrets.ANDROID_STORE_PASSWORD }}" \
             -PkeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" \
             -PkeyPassword="${{ secrets.ANDROID_KEY_PASSWORD }}"
-      
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: android/app/build/outputs/apk/release/
+
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: testers
-          file: app/build/outputs/apk/release/app-release.apk
-      
+          file: android/app/build/outputs/apk/release/app-release.apk
+
       - name: Upload to Play Store (Internal Testing)
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           packageName: com.riyobox
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
           track: internal
           status: completed
