@@ -1,0 +1,11 @@
+name = "riyobox-admin"
+type = "pages"
+compatibility_date = "2024-01-01"
+
+[env.production]
+account_id = "your-account-id"
+workers_dev = true
+
+[[build]]
+command = "npm run build"
+publish = "dist"

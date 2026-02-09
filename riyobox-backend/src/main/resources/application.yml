@@ -1,0 +1,121 @@
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+    min-response-size: 1024
+
+# Spring Configuration
+spring:
+  application:
+    name: riyobox-backend
+  
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://riyobox:riyobox123@localhost:27017/riyobox?authSource=admin}
+      auto-index-creation: true
+    
+    # Redis Configuration
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:redis123}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+  
+  # File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
+      enabled: true
+      file-size-threshold: 0B
+  
+  # Actuator for Monitoring
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: always
+
+# Application Configuration
+app:
+  # JWT Configuration
+  jwt:
+    secret: ${JWT_SECRET:riyobox-secret-key-change-in-production-2024}
+    expiration: 86400000 # 24 hours
+  
+  # File Storage Configuration
+  storage:
+    type: r2 # r2, s3, or cloudinary
+    max-file-size-mb: 2048
+    allowed-video-types: mp4,mov,avi,mkv,webm
+    allowed-image-types: jpg,jpeg,png,gif,webp
+  
+  # Streaming Configuration
+  streaming:
+    chunk-size: 1048576 # 1MB chunks
+    buffer-size: 5242880 # 5MB buffer
+  
+  # CORS Configuration
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8081}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+
+# Cloudflare R2 Configuration
+cloudflare:
+  r2:
+    account-id: ${R2_ACCOUNT_ID:}
+    access-key-id: ${R2_ACCESS_KEY_ID:}
+    secret-access-key: ${R2_SECRET_ACCESS_KEY:}
+    bucket-name: ${R2_BUCKET_NAME:riyobox-storage}
+    public-url: ${R2_PUBLIC_URL:https://pub.example.r2.dev}
+    region: auto
+    endpoint: https://${cloudflare.r2.account-id}.r2.cloudflarestorage.com
+
+# Cloudinary Configuration
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
+  secure: true
+
+# Logging Configuration
+logging:
+  level:
+    com.riyobox: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.springframework.data.mongodb.core: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/riyobox.log
+    max-size: 10MB
+    max-history: 30
+
+# Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
