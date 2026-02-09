@@ -1,4 +1,4 @@
-name: Android CI/CD Full
+name: Android CI/CD Full Safe
 
 on:
   push:
@@ -23,17 +23,17 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build Debug APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: android/app/build/outputs/apk/debug/
+          path: app/build/outputs/apk/debug/
 
   test:
     runs-on: ubuntu-latest
@@ -49,11 +49,11 @@ jobs:
 
       - uses: android-actions/setup-android@v2
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Run Unit Tests
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew test
+        run: ./gradlew test
 
   deploy:
     runs-on: ubuntu-latest
@@ -70,15 +70,15 @@ jobs:
 
       - uses: android-actions/setup-android@v2
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Decode keystore
-        working-directory: android
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
 
       - name: Build Release APK & AAB
-        working-directory: android
         run: |
-          chmod +x gradlew
           ./gradlew assembleRelease bundleRelease \
             -PstorePassword="${{ secrets.ANDROID_STORE_PASSWORD }}" \
             -PkeyAlias="${{ secrets.ANDROID_KEY_ALIAS }}" \
@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: android/app/build/outputs/apk/release/
+          path: app/build/outputs/apk/release/
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -96,13 +96,13 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: testers
-          file: android/app/build/outputs/apk/release/app-release.apk
+          file: app/build/outputs/apk/release/app-release.apk
 
       - name: Upload to Play Store (Internal Testing)
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           packageName: com.riyobox
-          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal
           status: completed
