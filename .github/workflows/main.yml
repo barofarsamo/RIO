@@ -36,7 +36,7 @@ jobs:
         run: ./gradlew assembleDebug
         working-directory: riyobox-android
 
-      # 6️⃣ Upload Debug APK
+      #   Upload Debug APK
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
