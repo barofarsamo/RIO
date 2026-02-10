@@ -50,7 +50,8 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: testers
-          file: riyobox-android/app/build/outputs/apk/release/app-release.apk
+          file: riyobox-android/app/build/outputs/apk/release/*.apk
+        
 
       # Upload to Play Store (Internal Testing)
       - name: Upload to Play Store
