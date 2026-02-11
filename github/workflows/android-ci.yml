@@ -1,50 +1,51 @@
-name: Android CI/CD
+name: Android CI/CD (Debug APK)
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
+      # 3️⃣ Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      # Hubi gradlew inuu executable yahay
-      - name: Grant execute permission
+      # 4️⃣ Give gradlew permission
+      - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: riyobox-android
 
-      # Nadiifi kadibna dhis Debug APK (signing ma rabo)
+      # 5️⃣ Build Debug APK
       - name: Build Debug APK
-        run: |
-          ./gradlew clean
-          ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace
         working-directory: riyobox-android
 
-      # Si toos ah u hel APK-ga
-      - name: Find APK
+      # 6️⃣ Find APK dynamically
+      - name: Find Debug APK
         run: |
           APK_PATH=$(find riyobox-android -type f -name "*debug*.apk" | head -n 1)
           if [ -z "$APK_PATH" ]; then
-            echo "❌ NO APK FOUND"
+            echo "❌ APK not found!"
             exit 1
           fi
-          echo "✅ APK FOUND AT: $APK_PATH"
+          echo "✅ APK found at $APK_PATH"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
-      # U dir Firebase
+      # 7️⃣ Upload to Firebase
       - name: Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
