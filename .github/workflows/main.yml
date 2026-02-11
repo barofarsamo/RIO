@@ -1,4 +1,4 @@
-name: Android CI/CD (Debuggable)
+name: Android CI/CD
 
 on:
   push:
@@ -21,33 +21,34 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      # Hubi gradlew inuu executable yahay
       - name: Grant execute permission
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
         working-directory: riyobox-android
 
-      - name: Decode keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
-        working-directory: riyobox-android
-
-      # ✅ BUILD
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace
-        working-directory: riyobox-android
-
-      # ✅ HUBINTA
-      - name: Check APK exists
+      # Nadiifi kadibna dhis Debug APK (signing ma rabo)
+      - name: Build Debug APK
         run: |
-          if [ ! -f "riyobox-android/app/build/outputs/apk/release/app-release.apk" ]; then
-            echo "❌ APK NOT FOUND!"
+          ./gradlew clean
+          ./gradlew assembleDebug --stacktrace
+        working-directory: riyobox-android
+
+      # Si toos ah u hel APK-ga
+      - name: Find APK
+        run: |
+          APK_PATH=$(find riyobox-android -type f -name "*debug*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "❌ NO APK FOUND"
             exit 1
           fi
-          echo "✅ APK FOUND!"
+          echo "✅ APK FOUND AT: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
-      # ✅ FIREBASE
+      # U dir Firebase
       - name: Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: testers
-          file: riyobox-android/app/build/outputs/apk/release/app-release.apk
+          file: ${{ env.APK_PATH }}
