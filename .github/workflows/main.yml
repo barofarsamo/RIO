@@ -21,7 +21,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission
         run: chmod +x ./gradlew
         working-directory: riyobox-android
 
@@ -29,33 +29,25 @@ jobs:
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
         working-directory: riyobox-android
 
-      # 🔴 TALLAABADA MUHIIMKA AH
-      # Halkan ayaan si qasab ah APK u dhisaynaa
-      - name: Build APK ONLY (force)
-        run: ./gradlew :app:assembleRelease
+      # ✅ BUILD
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
         working-directory: riyobox-android
 
-      # 🔍 HUBINTA DHABTA AH
-      - name: SHOW ALL APK FILES
+      # ✅ HUBINTA
+      - name: Check APK exists
         run: |
-          echo "====== APK FILES FOUND ======"
-          find riyobox-android -type f -name "*.apk" || true
-          echo "============================="
-
-      # ❌ Haddii wax APK ah jirin → halkan ayuu ku caddaanayaa
-      - name: Fail if no APK exists
-        run: |
-          APK_COUNT=$(find riyobox-android -type f -name "*.apk" | wc -l)
-          if [ "$APK_COUNT" -eq 0 ]; then
-            echo "❌ NO APK WAS GENERATED. FIREBASE CANNOT WORK."
+          if [ ! -f "riyobox-android/app/build/outputs/apk/release/app-release.apk" ]; then
+            echo "❌ APK NOT FOUND!"
             exit 1
           fi
+          echo "✅ APK FOUND!"
 
-      # ✅ HADDII APK JIRO → FIREBASE AYAA LA DIRAYAA
+      # ✅ FIREBASE
       - name: Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
           groups: testers
-          file: riyobox-android/**/*.apk
+          file: riyobox-android/app/build/outputs/apk/release/app-release.apk
