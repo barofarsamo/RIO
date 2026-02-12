@@ -38,23 +38,8 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = if (authViewModel.isLoggedIn.value) "main" else "login"
+        startDestination = "main"
     ) {
-        // Auth Screens
-        composable("login") {
-            LoginScreen(
-                onLoginSuccess = { navController.navigate("main") },
-                onNavigateToRegister = { navController.navigate("register") }
-            )
-        }
-
-        composable("register") {
-            RegisterScreen(
-                onRegisterSuccess = { navController.navigate("main") },
-                onNavigateToLogin = { navController.navigate("login") }
-            )
-        }
-
         // Main Navigation (Bottom Navigation)
         composable("main") {
             MainNavigationScreen(
@@ -64,9 +49,6 @@ fun AppNavigation() {
                 },
                 onLogout = {
                     authViewModel.logout()
-                    navController.navigate("login") {
-                        popUpTo("main") { inclusive = true }
-                    }
                 }
             )
         }
