@@ -1,0 +1,11 @@
+.gradle
+build
+riyobox-android/app/build
+riyobox-android/.gradle
+riyobox-android/build_output.log
+gradlew_output.txt
+*.json
+!android-ci.yml
+!package.json
+!package-lock.json
+**/google-services.json
