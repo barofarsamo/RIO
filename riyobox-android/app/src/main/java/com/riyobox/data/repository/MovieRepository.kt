@@ -177,7 +177,7 @@ class MovieRepository @Inject constructor(
                 val apiResponse = response.body()
                 
                 if (apiResponse?.success == true) {
-                    val movies = apiResponse.data ?: emptyList()
+                    val movies = apiResponse.data?.content ?: emptyList()
                     Result.success(movies)
                 } else {
                     Result.failure(

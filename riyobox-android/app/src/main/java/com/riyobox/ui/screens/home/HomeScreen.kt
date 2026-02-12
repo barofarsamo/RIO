@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.riyobox.ui.screens.home
 
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.riyobox.data.model.Movie
 import com.riyobox.ui.viewmodel.MovieViewModel
+import com.riyobox.ui.components.FeaturedMovieCard
+import com.riyobox.ui.components.MovieCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onMovieClick: (String) -> Unit,

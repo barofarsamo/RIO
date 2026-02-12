@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.riyobox.ui.screens.search
 
 import androidx.compose.foundation.layout.Arrangement
@@ -347,17 +348,3 @@ fun SearchResultItem(
     }
 }
 
-// Extension for clickable modifier
-fun Modifier.clickable(
-    enabled: Boolean = true,
-    onClick: () -> Unit
-): Modifier = this.then(
-    androidx.compose.foundation.composed {
-        androidx.compose.foundation.clickable(
-            enabled = enabled,
-            onClick = onClick,
-            indication = null,
-            interactionSource = null
-        )
-    }
-)

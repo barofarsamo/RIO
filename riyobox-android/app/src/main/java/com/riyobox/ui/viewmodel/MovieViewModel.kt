@@ -28,7 +28,8 @@ class MovieViewModel @Inject constructor(
     val error: StateFlow<String?> = _error.asStateFlow()
     
     private var currentPage = 0
-    private var isLastPage = false
+    private var _isLastPage = false
+    val isLastPage: Boolean get() = _isLastPage
     
     fun loadMovies(refresh: Boolean = false) {
         if (isLoading.value) return
@@ -39,11 +40,11 @@ class MovieViewModel @Inject constructor(
             
             if (refresh) {
                 currentPage = 0
-                isLastPage = false
+                _isLastPage = false
                 _movies.value = emptyList()
             }
             
-            if (isLastPage) {
+            if (_isLastPage) {
                 _isLoading.value = false
                 return@launch
             }
@@ -74,7 +75,7 @@ class MovieViewModel @Inject constructor(
                     }
                     
                     currentPage++
-                    isLastPage = pageResponse.last
+                    _isLastPage = pageResponse.last
                     
                 } else {
                     _error.value = result.exceptionOrNull()?.message ?: "Failed to load movies"

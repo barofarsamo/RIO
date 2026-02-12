@@ -2,6 +2,7 @@ package com.riyobox.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,15 +11,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.rememberNavController
+import com.riyobox.ui.components.BottomNavigationBar
+import com.riyobox.ui.screens.*
+import com.riyobox.ui.screens.category.CategoryScreen
 import com.riyobox.ui.screens.auth.LoginScreen
 import com.riyobox.ui.screens.auth.RegisterScreen
-import com.riyobox.ui.screens.Category.CategoryScreen
 import com.riyobox.ui.screens.downloads.DownloadsScreen
 import com.riyobox.ui.screens.home.HomeScreen
 import com.riyobox.ui.screens.movie.MovieDetailScreen
@@ -27,7 +30,6 @@ import com.riyobox.ui.screens.profile.MyRiyoboxScreen
 import com.riyobox.ui.screens.search.SearchScreen
 import com.riyobox.ui.viewmodel.AuthViewModel
 import com.riyobox.ui.viewmodel.MovieDetailViewModel
-import com.riyobox.ui.components.BottomNavigationBar
 
 @Composable
 fun AppNavigation() {
@@ -74,8 +76,8 @@ fun AppNavigation() {
             val movieId = backStackEntry.arguments?.getString("id") ?: ""
             MovieDetailScreen(
                 movieId = movieId,
-                onPlayClick = { movieId ->
-                    navController.navigate("player/$movieId")
+                onPlayClick = { id ->
+                    navController.navigate("player/$id")
                 },
                 onBack = { navController.popBackStack() }
             )
@@ -96,7 +98,6 @@ fun AppNavigation() {
             if (movie != null) {
                 VideoPlayerScreen(
                     videoUrl = movie!!.videoUrl,
-                    movieTitle = movie!!.title,
                     movieId = movieId,
                     onBack = { navController.popBackStack() }
                 )
@@ -161,8 +162,7 @@ fun MainNavigationScreen(
                     onCategoryClick = { categoryId ->
                         // Navigate to category movies
                         navController.navigate("category/$categoryId/movies")
-                    },
-                    onMovieClick = onMovieClick
+                    }
                 )
             }
 

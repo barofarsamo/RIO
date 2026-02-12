@@ -78,6 +78,11 @@ interface ApiService {
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20
     ): Response<ApiResponse<PageResponse<Movie>>>
+
+    @POST("auth/refresh")
+    suspend fun refreshToken(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<AuthResponse>>
 }
 
 // ✅ ADD: Standard API response wrapper
@@ -106,4 +111,24 @@ data class WatchProgressRequest(
     val percentage: Int // 0-100
 )
 
-// ✅ KEEP existing RegisterRequest and LoginRequest
+data class RegisterRequest(
+    val email: String,
+    val password: String,
+    val name: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+data class AuthResponse(
+    val token: String,
+    val user: com.riyobox.data.model.User
+)
+
+data class RefreshTokenRequest(
+    val token: String
+)
+
+// Add missing method to ApiService if needed

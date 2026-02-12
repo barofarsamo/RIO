@@ -83,19 +83,34 @@ class WebSocketManager {
     }
 }
 
-fun JSONObject.toMap(): Map<String, Any> = keys().asSequence().associate { key ->
-    val value = this[key]
-    key to when (value) {
-        is JSONObject -> value.toMap()
-        is org.json.JSONArray -> value.toList()
-        else -> value
+fun JSONObject.toMap(): Map<String, Any> {
+    val map = mutableMapOf<String, Any>()
+    val keys = keys()
+    while (keys.hasNext()) {
+        val key = keys.next() as String
+        val value = opt(key)
+        if (value != null) {
+            map[key] = when (value) {
+                is JSONObject -> value.toMap()
+                is org.json.JSONArray -> value.toList()
+                else -> value
+            }
+        }
     }
+    return map
 }
 
-fun org.json.JSONArray.toList(): List<Any> = (0 until length()).map { index ->
-    when (val value = this[index]) {
-        is JSONObject -> value.toMap()
-        is org.json.JSONArray -> value.toList()
-        else -> value
+fun org.json.JSONArray.toList(): List<Any> {
+    val list = mutableListOf<Any>()
+    for (i in 0 until length()) {
+        val value = opt(i)
+        if (value != null) {
+            list.add(when (value) {
+                is JSONObject -> value.toMap()
+                is org.json.JSONArray -> value.toList()
+                else -> value
+            })
+        }
     }
+    return list
 }
