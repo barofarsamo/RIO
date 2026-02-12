@@ -78,6 +78,11 @@ interface ApiService {
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20
     ): Response<ApiResponse<PageResponse<Movie>>>
+
+    @POST("auth/refresh")
+    suspend fun refreshToken(
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<AuthResponse>>
 }
 
 // ✅ ADD: Standard API response wrapper
@@ -106,4 +111,20 @@ data class WatchProgressRequest(
     val percentage: Int // 0-100
 )
 
-// ✅ KEEP existing RegisterRequest and LoginRequest
+// ✅ ADD: Register and Login requests
+data class RegisterRequest(
+    val name: String,
+    val email: String,
+    val password: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+// ✅ ADD: Auth response
+data class AuthResponse(
+    val token: String,
+    val user: User
+)

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     
     @Inject
-    lateinit var preferences: AppPreferences
+    lateinit var preferences: com.riyobox.data.local.datastore.AppPreferences
     
     private lateinit var webSocketManager: WebSocketManager
     

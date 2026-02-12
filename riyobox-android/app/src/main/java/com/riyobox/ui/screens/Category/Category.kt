@@ -108,6 +108,7 @@ fun CategoryScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryCard(
     category: Category,

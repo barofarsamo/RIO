@@ -55,6 +55,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.riyobox.ui.viewmodel.ProfileViewModel
+import com.riyobox.ui.viewmodel.User
+import com.riyobox.ui.viewmodel.UserStats
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -362,6 +364,7 @@ fun StatItem(value: String, label: String, icon: ImageVector) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuItem(
     icon: ImageVector,
@@ -415,20 +418,7 @@ fun MenuItem(
     }
 }
 
-// Data Models
-data class User(
-    val id: String,
-    val name: String,
-    val email: String,
-    val profilePicture: String? = null,
-    val subscriptionPlan: String = "free"
-)
-
-data class UserStats(
-    val watchTime: Int = 45,
-    val favoriteCount: Int = 12,
-    val downloadCount: Int = 8
-)
+// Data Models removed because they are in ViewModel
 
 // Menu Items
 data class MenuItemData(

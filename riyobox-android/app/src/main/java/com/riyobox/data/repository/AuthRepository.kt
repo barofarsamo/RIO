@@ -7,8 +7,8 @@ import com.riyobox.data.model.User
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val apiService: ApiService,
-    private val preferences: AppPreferences
+    private val apiService: com.riyobox.data.network.ApiService,
+    private val preferences: com.riyobox.data.local.datastore.AppPreferences
 ) {
     
     suspend fun register(email: String, password: String, name: String): Result<User> {

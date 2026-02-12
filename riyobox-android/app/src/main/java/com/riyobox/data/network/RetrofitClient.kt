@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.riyobox.BuildConfig
 import com.riyobox.data.local.datastore.AppPreferences
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -37,7 +38,6 @@ class RetrofitClient @Inject constructor(
         fun getBaseUrl(): String {
             return when {
                 BuildConfig.DEBUG -> DEV_BASE_URL
-                BuildConfig.FLAVOR.contains("staging") -> STAGING_BASE_URL
                 else -> PROD_BASE_URL
             }
         }
@@ -165,7 +165,6 @@ class RetrofitClient @Inject constructor(
             .baseUrl(getBaseUrl())
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory()) // If using coroutine adapters
             .build()
             .create(ApiService::class.java)
     }
@@ -255,7 +254,7 @@ class RetrofitClient @Inject constructor(
 
     // Clear all caches
     fun clearCache() {
-        okHttpClient.cache()?.evictAll()
+        okHttpClient.cache?.evictAll()
     }
 
     // Create a custom request for video streaming with range headers
