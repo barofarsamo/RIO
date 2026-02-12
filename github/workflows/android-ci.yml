@@ -20,7 +20,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 3️⃣ Setup Android SDK
+      # Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
