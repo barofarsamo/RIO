@@ -49,17 +49,9 @@ class MovieViewModel @Inject constructor(
                 return@launch
             }
             
-            val token = authRepository.getAuthToken()
-            if (token == null) {
-                _error.value = "Not authenticated. Please login."
-                _isLoading.value = false
-                return@launch
-            }
-            
             try {
                 // ✅ CORRECT: Use proper repository function
                 val result = movieRepository.getMovies(
-                    token = token,
                     page = currentPage,
                     size = 20
                 )
@@ -92,15 +84,8 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             
-            val token = authRepository.getAuthToken()
-            if (token == null) {
-                onError("Not authenticated")
-                _isLoading.value = false
-                return@launch
-            }
-            
             try {
-                val result = movieRepository.getMovieById(token, id)
+                val result = movieRepository.getMovieById(id)
                 
                 if (result.isSuccess) {
                     onSuccess(result.getOrThrow())

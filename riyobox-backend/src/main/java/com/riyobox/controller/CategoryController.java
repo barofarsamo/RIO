@@ -1,6 +1,7 @@
 package com.riyobox.controller;
 
 import com.riyobox.model.Category;
+import com.riyobox.model.dto.ApiResponse;
 import com.riyobox.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class CategoryController {
     private final CategoryService categoryService;
     
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
+        return ResponseEntity.ok(ApiResponse.success(categoryService.getAllCategories()));
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable String id) {
-        return ResponseEntity.ok(categoryService.getCategoryById(id));
+    public ResponseEntity<ApiResponse<Category>> getCategoryById(@PathVariable String id) {
+        return ResponseEntity.ok(ApiResponse.success(categoryService.getCategoryById(id)));
     }
     
     @GetMapping("/name/{name}")
