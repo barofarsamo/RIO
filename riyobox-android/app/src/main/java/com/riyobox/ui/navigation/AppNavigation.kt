@@ -15,11 +15,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.riyobox.ui.screens.auth.LoginScreen
 import com.riyobox.ui.screens.auth.RegisterScreen
-import com.riyobox.ui.screens.category.CategoryScreen
+import com.riyobox.ui.screens.Category.CategoryScreen
 import com.riyobox.ui.screens.downloads.DownloadsScreen
 import com.riyobox.ui.screens.home.HomeScreen
 import com.riyobox.ui.screens.movie.MovieDetailScreen

@@ -65,6 +65,8 @@ class WebSocketManager {
         _connectionState.value = false
     }
     
+    fun isConnected(): Boolean = _connectionState.value
+
     fun emit(event: String, data: Map<String, Any>) {
         socket?.emit(event, JSONObject(data))
     }

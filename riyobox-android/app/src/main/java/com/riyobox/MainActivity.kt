@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riyobox.data.local.datastore.AppPreferences
-import com.riyobox.data.network.websocket.WebSocketManager
+import com.riyobox.websocket.WebSocketManager
 import com.riyobox.ui.navigation.AppNavigation
 import com.riyobox.ui.theme.RiyoboxTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         // Initialize WebSocket connection
-        webSocketManager = WebSocketManager.getInstance(applicationContext)
+        webSocketManager = WebSocketManager.getInstance()
         
         // Connect WebSocket if user is logged in
         val token = preferences.getAuthToken()
