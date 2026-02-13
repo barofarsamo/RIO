@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.riyobox.ui.screens.search
 
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +38,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -345,17 +348,3 @@ fun SearchResultItem(
     }
 }
 
-// Extension for clickable modifier
-fun Modifier.clickable(
-    enabled: Boolean = true,
-    onClick: () -> Unit
-): Modifier = this.then(
-    androidx.compose.foundation.composed {
-        androidx.compose.foundation.clickable(
-            enabled = enabled,
-            onClick = onClick,
-            indication = null,
-            interactionSource = null
-        )
-    }
-)

@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.riyobox.ui.screens.category
 
 import androidx.compose.foundation.layout.Arrangement

@@ -1,5 +1,6 @@
 package com.riyobox.controller;
 
+import com.riyobox.model.dto.ApiResponse;
 import com.riyobox.model.dto.AuthRequest;
 import com.riyobox.model.dto.AuthResponse;
 import com.riyobox.service.AuthService;
@@ -16,20 +17,20 @@ public class AuthController {
     private final AuthService authService;
     
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody AuthRequest request) {
         AuthResponse response = authService.register(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, response.getMessage()));
     }
     
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody AuthRequest request) {
         AuthResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, response.getMessage()));
     }
     
     @GetMapping("/profile")
-    public ResponseEntity<AuthResponse.UserDTO> getProfile() {
+    public ResponseEntity<ApiResponse<AuthResponse.UserDTO>> getProfile() {
         var user = authService.getCurrentUser();
-        return ResponseEntity.ok(AuthResponse.UserDTO.fromUser(user));
+        return ResponseEntity.ok(ApiResponse.success(AuthResponse.UserDTO.fromUser(user)));
     }
 }

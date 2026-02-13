@@ -53,10 +53,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/media/thumbnails/**").permitAll()
                 .requestMatchers("/api/media/posters/**").permitAll()
                 
+                // Allow public access to movie listings and categories
+                .requestMatchers("/api/movies/**").permitAll()
+                .requestMatchers("/api/categories/**").permitAll()
+
                 // Authenticated endpoints
                 .requestMatchers("/api/stream/**").authenticated()
-                .requestMatchers("/api/movies/**").authenticated()
-                .requestMatchers("/api/categories/**").authenticated()
                 .requestMatchers("/api/users/**").authenticated()
                 .requestMatchers("/api/downloads/**").authenticated()
                 .requestMatchers("/api/favorites/**").authenticated()

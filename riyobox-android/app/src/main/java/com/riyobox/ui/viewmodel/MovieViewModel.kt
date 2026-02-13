@@ -28,7 +28,8 @@ class MovieViewModel @Inject constructor(
     val error: StateFlow<String?> = _error.asStateFlow()
     
     private var currentPage = 0
-    private var isLastPage = false
+    private var _isLastPage = false
+    val isLastPage: Boolean get() = _isLastPage
     
     fun loadMovies(refresh: Boolean = false) {
         if (isLoading.value) return
@@ -39,18 +40,11 @@ class MovieViewModel @Inject constructor(
             
             if (refresh) {
                 currentPage = 0
-                isLastPage = false
+                _isLastPage = false
                 _movies.value = emptyList()
             }
             
-            if (isLastPage) {
-                _isLoading.value = false
-                return@launch
-            }
-            
-            val token = authRepository.getAuthToken()
-            if (token == null) {
-                _error.value = "Not authenticated. Please login."
+            if (_isLastPage) {
                 _isLoading.value = false
                 return@launch
             }
@@ -58,7 +52,6 @@ class MovieViewModel @Inject constructor(
             try {
                 // ✅ CORRECT: Use proper repository function
                 val result = movieRepository.getMovies(
-                    token = token,
                     page = currentPage,
                     size = 20
                 )
@@ -74,7 +67,7 @@ class MovieViewModel @Inject constructor(
                     }
                     
                     currentPage++
-                    isLastPage = pageResponse.last
+                    _isLastPage = pageResponse.last
                     
                 } else {
                     _error.value = result.exceptionOrNull()?.message ?: "Failed to load movies"
@@ -91,15 +84,8 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             
-            val token = authRepository.getAuthToken()
-            if (token == null) {
-                onError("Not authenticated")
-                _isLoading.value = false
-                return@launch
-            }
-            
             try {
-                val result = movieRepository.getMovieById(token, id)
+                val result = movieRepository.getMovieById(id)
                 
                 if (result.isSuccess) {
                     onSuccess(result.getOrThrow())

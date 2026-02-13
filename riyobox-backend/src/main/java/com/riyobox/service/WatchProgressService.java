@@ -8,6 +8,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -27,15 +29,16 @@ public class WatchProgressService {
         redisTemplate.expire(key, 7, TimeUnit.DAYS);
         
         // Broadcast to WebSocket for real-time sync
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("movieId", movieId);
+        payload.put("position", position);
+        payload.put("duration", duration);
+        payload.put("updatedAt", LocalDateTime.now());
+
         messagingTemplate.convertAndSendToUser(
             userId,
             "/queue/progress",
-            Map.of(
-                "movieId", movieId,
-                "position", position,
-                "duration", duration,
-                "updatedAt", LocalDateTime.now()
-            )
+            payload
         );
         
         // Periodically save to MongoDB

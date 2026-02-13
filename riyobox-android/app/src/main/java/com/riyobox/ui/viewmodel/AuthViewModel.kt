@@ -21,7 +21,7 @@ class AuthViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
     
-    private val _isLoggedIn = MutableStateFlow(authRepository.isLoggedIn())
+    private val _isLoggedIn = MutableStateFlow(true)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
     
     fun login(email: String, password: String, onSuccess: () -> Unit) {
@@ -67,7 +67,7 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
-            _isLoggedIn.value = false
+            // Keep _isLoggedIn true to hide login pages even after logout
         }
     }
     

@@ -22,20 +22,16 @@ class AuthRepository @Inject constructor(
             )
             
             if (response.isSuccessful) {
-                val apiResponse: ApiResponse<com.riyobox.data.network.AuthResponse>? = response.body()
+                val apiResponse = response.body()
                 
                 if (apiResponse?.success == true && apiResponse.data != null) {
                     val authResponse = apiResponse.data
                     val token = authResponse.token
                     val user = authResponse.user
                     
-                    if (token != null && user != null) {
-                        preferences.saveAuthToken(token)
-                        preferences.saveUser(user)
-                        Result.success(user)
-                    } else {
-                        Result.failure(Exception("Registration failed: No token or user"))
-                    }
+                    preferences.saveAuthToken(token)
+                    preferences.saveUser(user)
+                    Result.success(user)
                 } else {
                     Result.failure(
                         Exception(apiResponse?.message ?: "Registration failed")
@@ -60,20 +56,16 @@ class AuthRepository @Inject constructor(
             )
             
             if (response.isSuccessful) {
-                val apiResponse: ApiResponse<com.riyobox.data.network.AuthResponse>? = response.body()
+                val apiResponse = response.body()
                 
                 if (apiResponse?.success == true && apiResponse.data != null) {
                     val authResponse = apiResponse.data
                     val token = authResponse.token
                     val user = authResponse.user
                     
-                    if (token != null && user != null) {
-                        preferences.saveAuthToken(token)
-                        preferences.saveUser(user)
-                        Result.success(user)
-                    } else {
-                        Result.failure(Exception("Login failed: No token or user"))
-                    }
+                    preferences.saveAuthToken(token)
+                    preferences.saveUser(user)
+                    Result.success(user)
                 } else {
                     Result.failure(
                         Exception(apiResponse?.message ?: "Login failed")
@@ -113,25 +105,20 @@ class AuthRepository @Inject constructor(
     }
     
     suspend fun refreshToken(): Boolean {
-        val currentToken = getAuthToken()
-        return if (currentToken != null) {
-            try {
-                val response = apiService.refreshToken("Bearer $currentToken")
-                if (response.isSuccessful) {
-                    val apiResponse: ApiResponse<com.riyobox.data.network.AuthResponse>? = response.body()
-                    if (apiResponse?.success == true && apiResponse.data?.token != null) {
-                        preferences.saveAuthToken(apiResponse.data.token)
-                        true
-                    } else {
-                        false
-                    }
+        return try {
+            val response = apiService.refreshToken()
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+                if (apiResponse?.success == true && apiResponse.data?.token != null) {
+                    preferences.saveAuthToken(apiResponse.data.token)
+                    true
                 } else {
                     false
                 }
-            } catch (e: Exception) {
+            } else {
                 false
             }
-        } else {
+        } catch (e: Exception) {
             false
         }
     }

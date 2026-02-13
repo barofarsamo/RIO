@@ -15,13 +15,11 @@ class MovieRepository @Inject constructor(
 ) {
     
     suspend fun getMovies(
-        token: String,
         page: Int = 0,
         size: Int = 20
     ): Result<PageResponse<Movie>> {
         return try {
             val response = apiService.getMovies(
-                token = "Bearer $token",
                 page = page,
                 size = size
             )
@@ -75,7 +73,7 @@ class MovieRepository @Inject constructor(
         }
     }
     
-    suspend fun getMovieById(token: String, id: String): Result<Movie> {
+    suspend fun getMovieById(id: String): Result<Movie> {
         return try {
             // Try local first
             val localMovie = movieDao.getMovieById(id)
@@ -84,10 +82,7 @@ class MovieRepository @Inject constructor(
             }
             
             // Try network
-            val response = apiService.getMovieById(
-                token = "Bearer $token",
-                id = id
-            )
+            val response = apiService.getMovieById(id = id)
             
             if (response.isSuccessful) {
                 val apiResponse = response.body()
@@ -109,9 +104,9 @@ class MovieRepository @Inject constructor(
         }
     }
     
-    suspend fun getTrendingMovies(token: String): Result<List<Movie>> {
+    suspend fun getTrendingMovies(): Result<List<Movie>> {
         return try {
-            val response = apiService.getTrendingMovies("Bearer $token")
+            val response = apiService.getTrendingMovies()
             
             if (response.isSuccessful) {
                 val apiResponse = response.body()
@@ -136,9 +131,9 @@ class MovieRepository @Inject constructor(
         }
     }
     
-    suspend fun getFeaturedMovies(token: String): Result<List<Movie>> {
+    suspend fun getFeaturedMovies(): Result<List<Movie>> {
         return try {
-            val response = apiService.getFeaturedMovies("Bearer $token")
+            val response = apiService.getFeaturedMovies()
             
             if (response.isSuccessful) {
                 val apiResponse = response.body()
@@ -166,18 +161,15 @@ class MovieRepository @Inject constructor(
         }
     }
     
-    suspend fun searchMovies(token: String, query: String): Result<List<Movie>> {
+    suspend fun searchMovies(query: String): Result<List<Movie>> {
         return try {
-            val response = apiService.searchMovies(
-                token = "Bearer $token",
-                query = query
-            )
+            val response = apiService.searchMovies(query = query)
             
             if (response.isSuccessful) {
                 val apiResponse = response.body()
                 
                 if (apiResponse?.success == true) {
-                    val movies = apiResponse.data ?: emptyList()
+                    val movies = apiResponse.data?.content ?: emptyList()
                     Result.success(movies)
                 } else {
                     Result.failure(

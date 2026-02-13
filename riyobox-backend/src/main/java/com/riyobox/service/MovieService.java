@@ -109,24 +109,24 @@ public class MovieService {
     }
     
     public MovieDTO toDTO(Movie movie) {
-        return MovieDTO.builder()
-                .id(movie.getId())
-                .title(movie.getTitle())
-                .description(movie.getDescription())
-                .thumbnailUrl(movie.getThumbnailUrl())
-                .videoUrl(movie.getVideoUrl())
-                .duration(movie.getDuration())
-                .releaseYear(movie.getReleaseYear())
-                .rating(movie.getRating())
-                .categories(movie.getCategories())
-                .actors(movie.getActors())
-                .director(movie.getDirector())
-                .views(movie.getViews())
-                .downloads(movie.getDownloads())
-                .isFeatured(movie.getIsFeatured())
-                .isSomaliOriginal(movie.getIsSomaliOriginal())
-                .createdAt(movie.getCreatedAt())
-                .build();
+        MovieDTO dto = new MovieDTO();
+        dto.setId(movie.getId());
+        dto.setTitle(movie.getTitle());
+        dto.setDescription(movie.getDescription());
+        dto.setThumbnailUrl(movie.getThumbnailUrl());
+        dto.setVideoUrl(movie.getVideoUrl());
+        dto.setDuration(movie.getDuration());
+        dto.setReleaseYear(movie.getReleaseYear());
+        dto.setRating(movie.getRating());
+        dto.setCategories(movie.getCategories());
+        dto.setActors(movie.getActors());
+        dto.setDirector(movie.getDirector());
+        dto.setViews(movie.getViews());
+        dto.setDownloads(movie.getDownloads());
+        dto.setIsFeatured(movie.getIsFeatured());
+        dto.setIsSomaliOriginal(movie.getIsSomaliOriginal());
+        dto.setCreatedAt(movie.getCreatedAt());
+        return dto;
     }
     
     public List<MovieDTO> toDTOList(List<Movie> movies) {

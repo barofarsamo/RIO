@@ -1,10 +1,13 @@
 package com.riyobox.di
 
 import android.content.Context
+import com.riyobox.data.local.dao.MovieDao
 import com.riyobox.data.local.database.AppDatabase
 import com.riyobox.data.local.datastore.AppPreferences
+import com.riyobox.data.network.ApiService
 import com.riyobox.data.network.RetrofitClient
 import com.riyobox.data.repository.AuthRepository
+import com.riyobox.data.repository.CategoryRepository
 import com.riyobox.data.repository.MovieRepository
 import dagger.Module
 import dagger.Provides
@@ -35,8 +38,11 @@ object AppModule {
     
     @Provides
     @Singleton
-    fun provideRetrofitClient(): RetrofitClient {
-        return RetrofitClient()
+    fun provideRetrofitClient(
+        @ApplicationContext context: Context,
+        preferences: AppPreferences
+    ): RetrofitClient {
+        return RetrofitClient(context, preferences)
     }
     
     @Provides
@@ -59,5 +65,13 @@ object AppModule {
         movieDao: MovieDao
     ): MovieRepository {
         return MovieRepository(apiService, movieDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(
+        apiService: ApiService
+    ): CategoryRepository {
+        return CategoryRepository(apiService)
     }
 }

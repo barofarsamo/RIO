@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/upload")
@@ -19,11 +20,11 @@ public class UploadController {
     @GetMapping("/config")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> getR2Config() {
-        return ResponseEntity.ok(Map.of(
-            "accountId", r2StorageService.getAccountId(),
-            "bucketName", r2StorageService.getBucketName(),
-            "publicUrl", r2StorageService.getPublicUrl()
-        ));
+        Map<String, String> config = new HashMap<>();
+        config.put("accountId", r2StorageService.getAccountId());
+        config.put("bucketName", r2StorageService.getBucketName());
+        config.put("publicUrl", r2StorageService.getPublicUrl(""));
+        return ResponseEntity.ok(config);
     }
     
     @PostMapping("/presigned")
@@ -35,21 +36,5 @@ public class UploadController {
         
         Map<String, String> urls = r2StorageService.generatePresignedUrl(fileName, fileType);
         return ResponseEntity.ok(urls);
-    }
-    
-    @PostMapping("/thumbnail")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, String>> uploadThumbnail(@RequestParam("file") MultipartFile file) 
-            throws IOException {
-        String url = r2StorageService.uploadFile(file, "thumbnails");
-        return ResponseEntity.ok(Map.of("url", url));
-    }
-    
-    @PostMapping("/video")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, String>> uploadVideo(@RequestParam("file") MultipartFile file) 
-            throws IOException {
-        String url = r2StorageService.uploadFile(file, "videos");
-        return ResponseEntity.ok(Map.of("url", url));
     }
 }

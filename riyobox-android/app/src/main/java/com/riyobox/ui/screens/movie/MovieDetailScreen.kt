@@ -49,6 +49,7 @@ import com.riyobox.ui.viewmodel.MovieDetailViewModel
 @Composable
 fun MovieDetailScreen(
     movieId: String,
+    onPlayClick: (String) -> Unit,
     onBack: () -> Unit,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
@@ -242,7 +243,7 @@ fun MovieDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Button(
-                            onClick = { /* Play movie */ },
+                            onClick = { onPlayClick(currentMovie.id) },
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("Play Now")

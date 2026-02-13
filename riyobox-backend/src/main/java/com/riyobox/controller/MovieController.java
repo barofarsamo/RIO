@@ -1,6 +1,7 @@
 package com.riyobox.controller;
 
 import com.riyobox.model.Movie;
+import com.riyobox.model.dto.ApiResponse;
 import com.riyobox.model.dto.MovieDTO;
 import com.riyobox.service.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -20,32 +21,32 @@ public class MovieController {
     private final MovieService movieService;
     
     @GetMapping
-    public ResponseEntity<Page<Movie>> getMovies(Pageable pageable) {
-        return ResponseEntity.ok(movieService.getMovies(pageable));
+    public ResponseEntity<ApiResponse<Page<Movie>>> getMovies(Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(movieService.getMovies(pageable)));
     }
     
     @GetMapping("/all")
-    public ResponseEntity<List<MovieDTO>> getAllMovies() {
+    public ResponseEntity<ApiResponse<List<MovieDTO>>> getAllMovies() {
         List<Movie> movies = movieService.getAllMovies();
-        return ResponseEntity.ok(movieService.toDTOList(movies));
+        return ResponseEntity.ok(ApiResponse.success(movieService.toDTOList(movies)));
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<MovieDTO> getMovieById(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<MovieDTO>> getMovieById(@PathVariable String id) {
         Movie movie = movieService.getMovieById(id);
-        return ResponseEntity.ok(movieService.toDTO(movie));
+        return ResponseEntity.ok(ApiResponse.success(movieService.toDTO(movie)));
     }
     
     @GetMapping("/featured")
-    public ResponseEntity<List<MovieDTO>> getFeaturedMovies() {
+    public ResponseEntity<ApiResponse<List<MovieDTO>>> getFeaturedMovies() {
         List<Movie> movies = movieService.getFeaturedMovies();
-        return ResponseEntity.ok(movieService.toDTOList(movies));
+        return ResponseEntity.ok(ApiResponse.success(movieService.toDTOList(movies)));
     }
     
     @GetMapping("/trending")
-    public ResponseEntity<List<MovieDTO>> getTrendingMovies() {
+    public ResponseEntity<ApiResponse<List<MovieDTO>>> getTrendingMovies() {
         List<Movie> movies = movieService.getTrendingMovies();
-        return ResponseEntity.ok(movieService.toDTOList(movies));
+        return ResponseEntity.ok(ApiResponse.success(movieService.toDTOList(movies)));
     }
     
     @GetMapping("/somali-originals")
