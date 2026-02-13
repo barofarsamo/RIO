@@ -2,6 +2,8 @@ name: Android CI/CD
 
 on:
   push:
+    branches: [ main, develop, "fix-android-build-and-generate-apk*" ]
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -44,8 +46,16 @@ jobs:
           echo "✅ APK FOUND AT: $APK_PATH"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
+      # Upload APK as artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: ${{ env.APK_PATH }}
+
       # U dir Firebase
       - name: Firebase App Distribution
+        if: github.ref == 'refs/heads/main'
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}

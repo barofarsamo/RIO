@@ -1,0 +1,23 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] --------------------< com.riyobox:riyobox-backend >---------------------
+[INFO] Building riyobox-backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 1 problem was encountered while building the effective model for org.javassist:javassist:jar:3.18.2-GA during dependency collection step for project (use -X to see details)
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ riyobox-backend ---
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO]
+[INFO] --- compiler:3.11.0:compile (default-compile) @ riyobox-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 47 source files with javac [debug release 17] to target/classes
+[INFO] /app/riyobox-backend/src/main/java/com/riyobox/controller/HealthController.java: /app/riyobox-backend/src/main/java/com/riyobox/controller/HealthController.java uses or overrides a deprecated API.
+[INFO] /app/riyobox-backend/src/main/java/com/riyobox/controller/HealthController.java: Recompile with -Xlint:deprecation for details.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.010 s
+[INFO] Finished at: 2026-02-13T08:16:05Z
+[INFO] ------------------------------------------------------------------------

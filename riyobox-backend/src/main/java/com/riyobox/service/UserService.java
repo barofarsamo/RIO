@@ -32,6 +32,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    public long getUserCount() {
+        return userRepository.count();
+    }
     
     public User updateUser(String id, User userDetails) {
         User user = getUserById(id);

@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -33,7 +34,7 @@ public class R2StorageService {
     @Value("${r2.public-url}")
     private String publicUrl;
     
-    public String generatePresignedUrl(String fileName, String contentType) {
+    public Map<String, String> generatePresignedUrl(String fileName, String contentType) {
         S3Presigner presigner = S3Presigner.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey, secretKey)
@@ -65,5 +66,17 @@ public class R2StorageService {
     
     public String getPublicUrl(String key) {
         return publicUrl + "/" + key;
+    }
+
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
+    public String getAccountId() { return accountId; }
+    public String getBucketName() { return bucketName; }
+
+    public String uploadFile(org.springframework.web.multipart.MultipartFile file, String folder) {
+        // Mock implementation
+        return publicUrl + "/" + folder + "/" + file.getOriginalFilename();
     }
 }
