@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -93,7 +95,7 @@ fun VideoPlayerScreen(
                 PlayerView(ctx).apply {
                     this.player = player
                     useController = true
-                    showBuffering = true
+                    setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS)
                     setKeepContentOnPlayerReset(true)
                 }
             },

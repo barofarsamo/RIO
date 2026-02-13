@@ -44,10 +44,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
 
     packaging {
@@ -103,6 +104,12 @@ dependencies {
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Socket.io
+    implementation("io.socket:socket.io-client:2.1.0")
+
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended")
 
     // ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")

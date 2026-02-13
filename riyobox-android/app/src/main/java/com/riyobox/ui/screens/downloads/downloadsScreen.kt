@@ -50,6 +50,8 @@ import coil.compose.AsyncImage
 import com.riyobox.R
 import com.riyobox.data.model.Download
 import com.riyobox.ui.viewmodel.DownloadsViewModel
+import com.riyobox.ui.viewmodel.DownloadSettings
+import com.riyobox.ui.viewmodel.StorageInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,7 +156,7 @@ fun DownloadsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
-                                    painter = androidx.compose.material.icons.Icons.Default.Delete,
+                                    imageVector = Icons.Default.Delete,
                                     contentDescription = null,
                                     modifier = Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)

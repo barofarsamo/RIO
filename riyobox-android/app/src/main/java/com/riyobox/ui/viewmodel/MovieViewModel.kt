@@ -28,7 +28,7 @@ class MovieViewModel @Inject constructor(
     val error: StateFlow<String?> = _error.asStateFlow()
     
     private var currentPage = 0
-    private var isLastPage = false
+    var isLastPage = false
     
     fun loadMovies(refresh: Boolean = false) {
         if (isLoading.value) return

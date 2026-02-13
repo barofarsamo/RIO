@@ -2,6 +2,7 @@ package com.riyobox.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,8 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.riyobox.ui.screens.auth.LoginScreen
 import com.riyobox.ui.screens.auth.RegisterScreen
 import com.riyobox.ui.screens.category.CategoryScreen
@@ -26,6 +26,7 @@ import com.riyobox.ui.screens.movie.MovieDetailScreen
 import com.riyobox.ui.screens.player.VideoPlayerScreen
 import com.riyobox.ui.screens.profile.MyRiyoboxScreen
 import com.riyobox.ui.screens.search.SearchScreen
+import com.riyobox.ui.screens.*
 import com.riyobox.ui.viewmodel.AuthViewModel
 import com.riyobox.ui.viewmodel.MovieDetailViewModel
 import com.riyobox.ui.components.BottomNavigationBar
@@ -75,9 +76,6 @@ fun AppNavigation() {
             val movieId = backStackEntry.arguments?.getString("id") ?: ""
             MovieDetailScreen(
                 movieId = movieId,
-                onPlayClick = { movieId ->
-                    navController.navigate("player/$movieId")
-                },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -97,7 +95,6 @@ fun AppNavigation() {
             if (movie != null) {
                 VideoPlayerScreen(
                     videoUrl = movie!!.videoUrl,
-                    movieTitle = movie!!.title,
                     movieId = movieId,
                     onBack = { navController.popBackStack() }
                 )
@@ -162,8 +159,7 @@ fun MainNavigationScreen(
                     onCategoryClick = { categoryId ->
                         // Navigate to category movies
                         navController.navigate("category/$categoryId/movies")
-                    },
-                    onMovieClick = onMovieClick
+                    }
                 )
             }
 

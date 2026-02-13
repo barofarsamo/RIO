@@ -56,6 +56,10 @@ public class MovieService {
     public List<Movie> getMoviesByCategory(String category) {
         return movieRepository.findByCategoriesContaining(category);
     }
+
+    public long getMovieCount() {
+        return movieRepository.count();
+    }
     
     @Transactional
     public Movie createMovie(Movie movie) {

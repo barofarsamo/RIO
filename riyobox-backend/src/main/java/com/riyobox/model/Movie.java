@@ -103,34 +103,51 @@ public class Movie {
     private Double watchCompletionRate; // percentage
     private Integer averageWatchTime; // in minutes
 
+    // Manual Getters/Setters for Lombok failure
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getThumbnailUrl() { return thumbnailUrl; }
+    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    public String getVideoUrl() { return videoUrl; }
+    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public Integer getDuration() { return duration; }
+    public void setDuration(Integer duration) { this.duration = duration; }
+    public Integer getReleaseYear() { return releaseYear; }
+    public void setReleaseYear(Integer releaseYear) { this.releaseYear = releaseYear; }
+    public Double getRating() { return rating; }
+    public void setRating(Double rating) { this.rating = rating; }
+    public List<String> getCategories() { return categories; }
+    public void setCategories(List<String> categories) { this.categories = categories; }
+    public List<String> getActors() { return actors; }
+    public void setActors(List<String> actors) { this.actors = actors; }
+    public String getDirector() { return director; }
+    public void setDirector(String director) { this.director = director; }
+    public Long getViews() { return views != null ? views : 0L; }
+    public void setViews(Long views) { this.views = views; }
+    public Long getDownloads() { return downloads != null ? downloads : 0L; }
+    public void setDownloads(Long downloads) { this.downloads = downloads; }
+    public Boolean getIsFeatured() { return isFeatured != null ? isFeatured : false; }
+    public void setIsFeatured(Boolean isFeatured) { this.isFeatured = isFeatured; }
+    public Boolean getIsSomaliOriginal() { return isSomaliOriginal != null ? isSomaliOriginal : false; }
+    public void setIsSomaliOriginal(Boolean isSomaliOriginal) { this.isSomaliOriginal = isSomaliOriginal; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     @Transient
     public String getBestQualityUrl() {
         if (videoUrls != null && !videoUrls.isEmpty()) {
-            // Try 1080p first, then 720p, then 480p
             if (videoUrls.containsKey("1080p")) return videoUrls.get("1080p");
             if (videoUrls.containsKey("720p")) return videoUrls.get("720p");
             if (videoUrls.containsKey("480p")) return videoUrls.get("480p");
             return videoUrls.values().iterator().next();
         }
-        return videoUrl; // Fallback to legacy URL
-    }
-
-    @Transient
-    public String getQualityUrl(String quality) {
-        if (videoUrls != null && videoUrls.containsKey(quality)) {
-            return videoUrls.get(quality);
-        }
-        return getBestQualityUrl(); // Fallback
-    }
-
-    @Transient
-    public boolean isAvailableInQuality(String quality) {
-        return videoUrls != null && videoUrls.containsKey(quality);
-    }
-
-    @Transient
-    public boolean hasQuality(String quality) {
-        return videoQualities != null && videoQualities.contains(quality);
+        return videoUrl;
     }
 
     public void incrementViews() {
@@ -143,104 +160,71 @@ public class Movie {
         this.downloads++;
     }
 
-    public void incrementLikes() {
-        if (this.likes == null) this.likes = 0L;
-        this.likes++;
-    }
-
-    public void decrementLikes() {
-        if (this.likes == null) this.likes = 0L;
-        if (this.likes > 0) this.likes--;
-    }
-
-    public void incrementDislikes() {
-        if (this.dislikes == null) this.dislikes = 0L;
-        this.dislikes++;
-    }
-
-    public void decrementDislikes() {
-        if (this.dislikes == null) this.dislikes = 0L;
-        if (this.dislikes > 0) this.dislikes--;
-    }
-
-    public double getLikeDislikeRatio() {
-        if (likes == null || dislikes == null || (likes + dislikes) == 0) {
-            return 0.0;
-        }
-        return (double) likes / (likes + dislikes);
-    }
-
-    public String getFormattedDuration() {
-        if (duration == null) return "0:00";
-        int hours = duration / 60;
-        int minutes = duration % 60;
-        if (hours > 0) {
-            return String.format("%d:%02d", hours, minutes);
-        }
-        return String.format("%d min", minutes);
-    }
-
-    @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        
-        if (this.publishedAt == null) {
-            this.publishedAt = LocalDateTime.now();
-        }
-        
-        // Initialize default values
         if (this.views == null) this.views = 0L;
         if (this.downloads == null) this.downloads = 0L;
-        if (this.likes == null) this.likes = 0L;
-        if (this.dislikes == null) this.dislikes = 0L;
-        if (this.rating == null) this.rating = 0.0;
-        if (this.isFeatured == null) this.isFeatured = false;
-        if (this.isSomaliOriginal == null) this.isSomaliOriginal = false;
-        if (this.isTrending == null) this.isTrending = false;
-        if (this.isExclusive == null) this.isExclusive = false;
-        if (this.hasSubtitles == null) this.hasSubtitles = false;
-        if (this.watchCompletionRate == null) this.watchCompletionRate = 0.0;
-        if (this.averageWatchTime == null) this.averageWatchTime = 0;
-        
-        // Initialize video qualities
-        if (this.videoQualities == null) {
-            this.videoQualities = List.of("480p", "720p");
-        }
-        
-        // Initialize lists
-        if (this.subtitleLanguages == null) this.subtitleLanguages = List.of();
-        if (this.audioLanguages == null) this.audioLanguages = List.of("Somali", "Arabic", "English");
-        if (this.contentWarnings == null) this.contentWarnings = List.of();
-        if (this.keywords == null) this.keywords = List.of();
-        
-        // Set default audio language
-        if (this.defaultAudioLanguage == null && this.audioLanguages != null && !this.audioLanguages.isEmpty()) {
-            this.defaultAudioLanguage = this.audioLanguages.get(0);
-        }
-        
-        // Generate slug if not present
-        if (this.title != null && this.slug == null) {
-            this.slug = generateSlug(this.title);
-        }
     }
 
-    @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
-        
-        // Update slug if title changed
-        if (this.title != null && this.slug == null) {
-            this.slug = generateSlug(this.title);
-        }
     }
 
-    private String generateSlug(String title) {
-        if (title == null) return null;
-        return title.toLowerCase()
-                .replaceAll("[^a-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-")
-                .replaceAll("-+", "-")
-                .trim();
+    public static MovieBuilder builder() {
+        return new MovieBuilder();
+    }
+
+    public static class MovieBuilder {
+        private String title;
+        private String description;
+        private String thumbnailUrl;
+        private String videoUrl;
+        private Integer duration;
+        private Integer releaseYear;
+        private Double rating;
+        private List<String> categories;
+        private List<String> actors;
+        private String director;
+        private Long views;
+        private Long downloads;
+        private Boolean isFeatured;
+        private Boolean isSomaliOriginal;
+
+        public MovieBuilder title(String title) { this.title = title; return this; }
+        public MovieBuilder description(String description) { this.description = description; return this; }
+        public MovieBuilder thumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; return this; }
+        public MovieBuilder videoUrl(String videoUrl) { this.videoUrl = videoUrl; return this; }
+        public MovieBuilder duration(Integer duration) { this.duration = duration; return this; }
+        public MovieBuilder releaseYear(Integer releaseYear) { this.releaseYear = releaseYear; return this; }
+        public MovieBuilder rating(Double rating) { this.rating = rating; return this; }
+        public MovieBuilder categories(List<String> categories) { this.categories = categories; return this; }
+        public MovieBuilder actors(List<String> actors) { this.actors = actors; return this; }
+        public MovieBuilder director(String director) { this.director = director; return this; }
+        public MovieBuilder views(Long views) { this.views = views; return this; }
+        public MovieBuilder downloads(Long downloads) { this.downloads = downloads; return this; }
+        public MovieBuilder isFeatured(Boolean isFeatured) { this.isFeatured = isFeatured; return this; }
+        public MovieBuilder isSomaliOriginal(Boolean isSomaliOriginal) { this.isSomaliOriginal = isSomaliOriginal; return this; }
+
+        public Movie build() {
+            Movie m = new Movie();
+            m.setTitle(title);
+            m.setDescription(description);
+            m.setThumbnailUrl(thumbnailUrl);
+            m.setVideoUrl(videoUrl);
+            m.setDuration(duration);
+            m.setReleaseYear(releaseYear);
+            m.setRating(rating);
+            m.setCategories(categories);
+            m.setActors(actors);
+            m.setDirector(director);
+            m.setViews(views);
+            m.setDownloads(downloads);
+            m.setIsFeatured(isFeatured);
+            m.setIsSomaliOriginal(isSomaliOriginal);
+            m.setCreatedAt(LocalDateTime.now());
+            m.setUpdatedAt(LocalDateTime.now());
+            return m;
+        }
     }
 }

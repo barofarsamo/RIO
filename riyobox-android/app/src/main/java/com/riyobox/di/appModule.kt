@@ -35,8 +35,8 @@ object AppModule {
     
     @Provides
     @Singleton
-    fun provideRetrofitClient(): RetrofitClient {
-        return RetrofitClient()
+    fun provideRetrofitClient(@ApplicationContext context: Context, preferences: AppPreferences): RetrofitClient {
+        return RetrofitClient(context, preferences)
     }
     
     @Provides
@@ -46,7 +46,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        apiService: ApiService,
+        apiService: com.riyobox.data.network.ApiService,
         preferences: AppPreferences
     ): AuthRepository {
         return AuthRepository(apiService, preferences)
@@ -55,8 +55,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMovieRepository(
-        apiService: ApiService,
-        movieDao: MovieDao
+        apiService: com.riyobox.data.network.ApiService,
+        movieDao: com.riyobox.data.local.dao.MovieDao
     ): MovieRepository {
         return MovieRepository(apiService, movieDao)
     }
