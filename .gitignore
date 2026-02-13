@@ -9,3 +9,9 @@ gradlew_output.txt
 !package.json
 !package-lock.json
 **/google-services.json
+
+# Backend
+riyobox-backend/target/
+riyobox-backend/mvn_output.log
+*.log
+.mvn/

@@ -1,0 +1,99 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'riyobox-backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'riyobox-backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run tests
+        run: mvn test -Dspring.data.mongodb.uri=mongodb://localhost:27017/test -Dspring.data.redis.host=localhost
+        working-directory: riyobox-backend
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+        working-directory: riyobox-backend
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Log in to Docker Hub
+        # Only run if Docker Hub credentials are provided as secrets
+        if: "${{ secrets.DOCKER_USERNAME != '' && secrets.DOCKER_PASSWORD != '' }}"
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker image
+        if: "${{ secrets.DOCKER_USERNAME != '' }}"
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:${{ github.sha }} riyobox-backend
+          docker tag ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:latest
+
+      - name: Deploy to Heroku
+        # Only run if Heroku credentials are provided as secrets
+        if: "${{ secrets.HEROKU_API_KEY != '' }}"
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          appdir: riyobox-backend

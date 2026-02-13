@@ -69,11 +69,7 @@ public class UserService implements UserDetailsService {
         user.getWatchHistory().removeIf(wh -> wh.getMovieId().equals(movieId));
         
         // Add new entry
-        User.WatchHistory watchHistory = User.WatchHistory.builder()
-                .movieId(movieId)
-                .watchedAt(LocalDateTime.now())
-                .progress(0)
-                .build();
+        User.WatchHistory watchHistory = new User.WatchHistory(movieId, LocalDateTime.now(), 0);
         
         user.getWatchHistory().add(0, watchHistory); // Add to beginning
         userRepository.save(user);
@@ -83,11 +79,7 @@ public class UserService implements UserDetailsService {
     public void addToDownloadHistory(String userId, String movieId, String quality) {
         User user = getUserById(userId);
         
-        User.DownloadHistory downloadHistory = User.DownloadHistory.builder()
-                .movieId(movieId)
-                .downloadedAt(LocalDateTime.now())
-                .quality(quality)
-                .build();
+        User.DownloadHistory downloadHistory = new User.DownloadHistory(movieId, LocalDateTime.now(), quality);
         
         user.getDownloadHistory().add(0, downloadHistory);
         userRepository.save(user);

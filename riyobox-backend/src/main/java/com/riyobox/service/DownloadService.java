@@ -89,12 +89,10 @@ public class DownloadService {
     }
     
     private Integer calculateFileSize(String quality) {
-        return switch (quality) {
-            case "480p" -> 500;
-            case "720p" -> 1000;
-            case "1080p" -> 2000;
-            default -> 800;
-        };
+        if ("480p".equals(quality)) return 500;
+        if ("720p".equals(quality)) return 1000;
+        if ("1080p".equals(quality)) return 2000;
+        return 800;
     }
     
     private String generateDownloadPath(String userId, String movieId, String quality) {
