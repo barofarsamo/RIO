@@ -1,6 +1,7 @@
 package com.riyobox.websocket
 
 import android.util.Log
+import com.riyobox.data.network.RetrofitClient
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,9 @@ class WebSocketManager {
             options.auth = mapOf("token" to token)
             options.transports = arrayOf("websocket")
             
-            socket = IO.socket("http://10.0.2.2:8080", options)
+            // Remove /api/ from base URL for WebSocket connection
+            val baseUrl = RetrofitClient.getBaseUrl().replace("/api/", "")
+            socket = IO.socket(baseUrl, options)
             
             socket?.on(Socket.EVENT_CONNECT) {
                 _connectionState.value = true

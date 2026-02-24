@@ -28,7 +28,8 @@ const Dashboard: React.FC = () => {
     return { movies: movies.data, stats }
   })
 
-  const { on } = useWebSocket('ws://localhost:8080/ws/admin')
+  const wsUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace('/api', '')
+  const { on } = useWebSocket(wsUrl)
 
   useEffect(() => {
     on('stats-update', (data) => {
