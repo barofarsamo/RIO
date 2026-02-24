@@ -69,20 +69,8 @@ export const movieService = {
     const formData = new FormData()
     formData.append('file', file)
     
-    const response = await fetch('/api/upload/thumbnail', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-    
-    if (!response.ok) {
-      throw new Error('Upload failed')
-    }
-    
-    const data = await response.json()
-    return data.url
+    const response = await apiPost<any>('/upload/thumbnail', formData)
+    return response.url
   },
 
   // Upload video (with progress)
@@ -96,7 +84,8 @@ export const movieService = {
       
       formData.append('file', file)
       
-      xhr.open('POST', '/api/upload/video')
+      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+      xhr.open('POST', `${baseURL}/upload/video`)
       xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`)
       
       xhr.upload.onprogress = (event) => {

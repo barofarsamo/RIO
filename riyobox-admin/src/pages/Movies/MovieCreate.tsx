@@ -45,9 +45,10 @@ const MovieCreate: React.FC = () => {
   ]
   
   const handleThumbnailUpload = async (file: File) => {
+    if (!file.name) return // Handle manual clear
     try {
       setUploading(true)
-      const url = await uploadService.uploadToStorage(file, 'r2')
+      const url = await uploadService.uploadFile(file, { category: 'thumbnails' })
       setThumbnailUrl(url)
       toast.success('Thumbnail uploaded successfully')
     } catch (error) {
@@ -62,20 +63,11 @@ const MovieCreate: React.FC = () => {
       setUploading(true)
       setUploadProgress(0)
       
-      // Simulate progress (in real app, use actual progress events)
-      const interval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 95) {
-            clearInterval(interval)
-            return 95
-          }
-          return prev + 5
-        })
-      }, 200)
+      const url = await uploadService.uploadFile(file, {
+        category: 'videos',
+        onProgress: (e) => setUploadProgress(e.progress)
+      })
       
-      const url = await uploadService.uploadToStorage(file, 'r2')
-      
-      clearInterval(interval)
       setUploadProgress(100)
       setVideoUrl(url)
       toast.success('Video uploaded successfully')
@@ -136,9 +128,6 @@ const MovieCreate: React.FC = () => {
                 previewUrl={thumbnailUrl}
                 uploading={uploading}
               />
-              {errors.thumbnailUrl && (
-                <p className="mt-2 text-sm text-red-600">{errors.thumbnailUrl.message}</p>
-              )}
             </div>
             
             {/* Video Upload */}
@@ -155,9 +144,6 @@ const MovieCreate: React.FC = () => {
                 <div className="mt-4">
                   <VideoPlayer url={videoUrl} />
                 </div>
-              )}
-              {errors.videoUrl && (
-                <p className="mt-2 text-sm text-red-600">{errors.videoUrl.message}</p>
               )}
             </div>
           </div>
