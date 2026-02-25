@@ -13,9 +13,10 @@ import {
 } from 'lucide-react'
 import { movieService } from '../../services/movie'
 import toast from 'react-hot-toast'
+import { Movie } from '../../types'
 
 const MovieList: React.FC = () => {
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   
@@ -129,7 +130,7 @@ const MovieList: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {data?.data.map((movie) => (
+                  {data?.content.map((movie: Movie) => (
                     <tr key={movie.id} className="hover:bg-gray-50">
                       <td className="py-4 px-6">
                         <div className="flex items-center space-x-4">
@@ -146,7 +147,7 @@ const MovieList: React.FC = () => {
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex flex-wrap gap-1 max-w-xs">
-                          {movie.categories.slice(0, 2).map((cat) => (
+                          {movie.categories.slice(0, 2).map((cat: string) => (
                             <span
                               key={cat}
                               className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
@@ -223,14 +224,14 @@ const MovieList: React.FC = () => {
               <div className="px-6 py-4 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{((page - 1) * 10) + 1}</span> to{' '}
-                    <span className="font-medium">{Math.min(page * 10, data.total)}</span> of{' '}
-                    <span className="font-medium">{data.total}</span> movies
+                    Showing <span className="font-medium">{(page * 10) + 1}</span> to{' '}
+                    <span className="font-medium">{Math.min((page + 1) * 10, data.totalElements)}</span> of{' '}
+                    <span className="font-medium">{data.totalElements}</span> movies
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      disabled={page === 1}
+                      onClick={() => setPage(p => Math.max(0, p - 1))}
+                      disabled={page === 0}
                       className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50"
                     >
                       Previous
@@ -238,11 +239,11 @@ const MovieList: React.FC = () => {
                     {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => {
                       let pageNum
                       if (data.totalPages <= 5) {
-                        pageNum = i + 1
-                      } else if (page <= 3) {
-                        pageNum = i + 1
-                      } else if (page >= data.totalPages - 2) {
-                        pageNum = data.totalPages - 4 + i
+                        pageNum = i
+                      } else if (page <= 2) {
+                        pageNum = i
+                      } else if (page >= data.totalPages - 3) {
+                        pageNum = data.totalPages - 5 + i
                       } else {
                         pageNum = page - 2 + i
                       }
@@ -257,13 +258,13 @@ const MovieList: React.FC = () => {
                               : 'border border-gray-300'
                           }`}
                         >
-                          {pageNum}
+                          {pageNum + 1}
                         </button>
                       )
                     })}
                     <button
-                      onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                      disabled={page === data.totalPages}
+                      onClick={() => setPage(p => Math.min(data.totalPages - 1, p + 1))}
+                      disabled={page === data.totalPages - 1}
                       className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50"
                     >
                       Next
