@@ -39,26 +39,6 @@ export interface MultipartPart {
   size: number
 }
 
-// Generate unique filename
-const generateUniqueFileName = (originalName: string): string => {
-  const timestamp = Date.now()
-  const randomString = Math.random().toString(36).substring(2, 15)
-  const extension = originalName.split('.').pop()
-  const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'))
-
-  return `${nameWithoutExt}-${timestamp}-${randomString}.${extension}`
-}
-
-// Helper to format bytes
-const formatBytes = (bytes: number, decimals: number = 2): string => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
-}
-
 export const uploadService = {
   // Get R2 configuration from backend
   async getR2Config(): Promise<CloudflareR2Config> {
@@ -72,6 +52,8 @@ export const uploadService = {
     useMultipart: boolean
     chunkSize: number
   }> {
+    const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024 // 100MB
+
     const response = await api.post('/upload/config/file', {
       fileName: file.name,
       fileType: file.type,
@@ -85,7 +67,7 @@ export const uploadService = {
   // Upload file to R2 using presigned URL
   async uploadToR2(
     file: File, 
-    _config: CloudflareR2Config,
+    config: CloudflareR2Config,
     options?: UploadOptions
   ): Promise<string> {
     try {
@@ -96,7 +78,7 @@ export const uploadService = {
         try {
           // 1. Get presigned URL from backend
           const presignedResponse = await api.post('/upload/presigned', {
-            fileName: generateUniqueFileName(file.name),
+            fileName: this.generateUniqueFileName(file.name),
             fileType: file.type,
             fileSize: file.size,
             category: options?.category || 'videos'
@@ -219,7 +201,7 @@ export const uploadService = {
   // Multipart upload for large files
   async uploadLargeFile(
     file: File, 
-    _config: CloudflareR2Config,
+    config: CloudflareR2Config,
     options?: UploadOptions
   ): Promise<string> {
     const CHUNK_SIZE = options?.chunkSize || 10 * 1024 * 1024 // 10MB chunks
@@ -230,7 +212,7 @@ export const uploadService = {
     try {
       // 1. Initiate multipart upload
       const initResponse = await api.post('/upload/multipart/initiate', {
-        fileName: generateUniqueFileName(file.name),
+        fileName: this.generateUniqueFileName(file.name),
         fileType: file.type,
         fileSize: file.size,
         category: options?.category || 'videos'
@@ -402,6 +384,16 @@ export const uploadService = {
     return response.data
   },
 
+  // Generate unique filename
+  private generateUniqueFileName(originalName: string): string {
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const extension = originalName.split('.').pop()
+    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'))
+
+    return `${nameWithoutExt}-${timestamp}-${randomString}.${extension}`
+  },
+
   // Validate file before upload
   validateFile(file: File, options?: UploadOptions): { valid: boolean; errors: string[] } {
     const errors: string[] = []
@@ -409,7 +401,7 @@ export const uploadService = {
     
     // Check file size
     if (file.size > maxSize) {
-      errors.push(`File too large. Maximum size is ${formatBytes(maxSize)}`)
+      errors.push(`File too large. Maximum size is ${this.formatBytes(maxSize)}`)
     }
     
     // Check file type
@@ -429,5 +421,18 @@ export const uploadService = {
       valid: errors.length === 0,
       errors
     }
+  },
+
+  // Helper to format bytes
+  private formatBytes(bytes: number, decimals: number = 2): string {
+    if (bytes === 0) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
   }
 }

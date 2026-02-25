@@ -61,16 +61,13 @@ export interface AuthResponse {
   message: string
 }
 
-export interface PageResponse<T> {
-  content: T[]
+export interface PaginatedResponse<T> {
+  data: T[]
+  total: number
   page: number
-  size: number
-  totalElements: number
+  limit: number
   totalPages: number
-  last: boolean
 }
-
-export interface PaginatedResponse<T> extends PageResponse<T> {}
 
 export interface AnalyticsData {
   totalMovies: number

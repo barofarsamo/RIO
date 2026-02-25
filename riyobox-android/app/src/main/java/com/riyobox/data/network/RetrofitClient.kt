@@ -35,11 +35,7 @@ class RetrofitClient @Inject constructor(
         
         // Get base URL based on build type
         fun getBaseUrl(): String {
-            return when {
-                BuildConfig.DEBUG -> DEV_BASE_URL
-                BuildConfig.FLAVOR.contains("staging") -> STAGING_BASE_URL
-                else -> PROD_BASE_URL
-            }
+            return if (BuildConfig.DEBUG) DEV_BASE_URL else PROD_BASE_URL
         }
     }
 
@@ -165,7 +161,6 @@ class RetrofitClient @Inject constructor(
             .baseUrl(getBaseUrl())
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory()) // If using coroutine adapters
             .build()
             .create(ApiService::class.java)
     }

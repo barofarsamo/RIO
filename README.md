@@ -21,12 +21,10 @@ Riyobox is a comprehensive movie streaming platform consisting of a Spring Boot 
 - **Android App:** Built via **GitHub Actions** which produces an APK on every push.
 - **Database:** Requires a MongoDB instance (e.g., MongoDB Atlas) and a Redis instance.
 
-For detailed deployment instructions, see the `README.md` files in each subdirectory.
+## Quick Fixes & Improvements
 
-## Quick Fixes Implemented
-
-- Fixed naming conventions and typos across the project.
-- Standardized API response format using a global wrapper.
-- Switched WebSocket protocol from STOMP to Socket.io for compatibility across all platforms.
-- Fixed critical bugs in Admin panel movie creation and file uploading logic.
-- Implemented manual getters, setters, and builders for backend models to ensure consistent behavior.
+- **Stability**: Fixed naming conventions, typos, and compilation errors across the project.
+- **Standardization**: Implemented a global `ApiResponse` wrapper in the backend for consistent communication.
+- **Real-time**: Switched from STOMP to **Socket.io** for better compatibility with modern web and mobile clients.
+- **CI/CD**: Added robust GitHub Actions for building both the Admin dashboard and the Android application (APK).
+- **Documentation**: Detailed guides provided in each sub-directory for deployment and configuration.

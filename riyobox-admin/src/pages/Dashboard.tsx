@@ -11,8 +11,7 @@ import {
 import { movieService } from '../services/movie'
 import { useWebSocket } from '../hooks/useWebSocket'
 import StatsCard from '../components/StatsCard'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Movie } from '../types'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const Dashboard: React.FC = () => {
   const [realTimeStats, setRealTimeStats] = useState({
@@ -23,26 +22,26 @@ const Dashboard: React.FC = () => {
 
   const { data: statistics } = useQuery('dashboard-stats', async () => {
     const [movies, stats] = await Promise.all([
-      movieService.getMovies(0, 5),
+      movieService.getMovies(1, 5),
       movieService.getStatistics(),
     ])
-    return { movies: movies.content, stats }
+    return { movies: movies.data, stats }
   })
 
-  const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
-  const wsUrl = baseURL.replace('/api', '')
+  const wsUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace('/api', '')
   const { on } = useWebSocket(wsUrl)
 
   useEffect(() => {
-    on('stats-update', (data: any) => {
+    on('stats-update', (data) => {
       setRealTimeStats(data)
     })
 
-    on('movie-added', (movie: any) => {
+    on('movie-added', (movie) => {
       console.log('New movie added:', movie)
+      // Refresh data
     })
 
-    on('user-activity', (activity: any) => {
+    on('user-activity', (activity) => {
       console.log('User activity:', activity)
     })
   }, [on])
@@ -50,45 +49,45 @@ const Dashboard: React.FC = () => {
   const statsCards = [
     {
       title: 'Total Movies',
-      value: (statistics?.stats as any)?.totalMovies || 0,
+      value: statistics?.stats?.totalMovies || 0,
       icon: <Film className="w-6 h-6" />,
-      trend: '+12%',
-      trendColor: 'text-green-600',
+      change: '+12%',
+      color: 'bg-blue-500',
     },
     {
       title: 'Total Users',
-      value: (statistics?.stats as any)?.totalUsers || 0,
+      value: statistics?.stats?.totalUsers || 0,
       icon: <Users className="w-6 h-6" />,
-      trend: '+8%',
-      trendColor: 'text-green-600',
+      change: '+8%',
+      color: 'bg-green-500',
     },
     {
       title: 'Total Views',
-      value: (statistics?.stats as any)?.totalViews || 0,
+      value: statistics?.stats?.totalViews || 0,
       icon: <Eye className="w-6 h-6" />,
-      trend: '+23%',
-      trendColor: 'text-green-600',
+      change: '+23%',
+      color: 'bg-purple-500',
     },
     {
       title: 'Total Downloads',
-      value: (statistics?.stats as any)?.totalDownloads || 0,
+      value: statistics?.stats?.totalDownloads || 0,
       icon: <Download className="w-6 h-6" />,
-      trend: '+15%',
-      trendColor: 'text-green-600',
+      change: '+15%',
+      color: 'bg-orange-500',
     },
     {
       title: 'Active Users',
       value: realTimeStats.activeUsers,
       icon: <Users className="w-6 h-6" />,
-      trend: 'Live',
-      trendColor: 'text-red-600',
+      change: 'Live',
+      color: 'bg-red-500',
     },
     {
       title: 'Current Views',
       value: realTimeStats.currentViews,
       icon: <Eye className="w-6 h-6" />,
-      trend: 'Live',
-      trendColor: 'text-red-600',
+      change: 'Live',
+      color: 'bg-indigo-500',
     },
   ]
 
@@ -184,7 +183,7 @@ const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {statistics?.movies?.map((movie: Movie) => (
+              {statistics?.movies?.map((movie) => (
                 <tr key={movie.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
@@ -201,7 +200,7 @@ const Dashboard: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex flex-wrap gap-1">
-                      {movie.categories.slice(0, 2).map((cat: string) => (
+                      {movie.categories.slice(0, 2).map((cat) => (
                         <span key={cat} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                           {cat}
                         </span>
