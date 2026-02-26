@@ -102,4 +102,8 @@ public class UserService implements UserDetailsService {
         User user = getUserById(userId);
         return user.getWatchHistory();
     }
+
+    public long getUserCount() {
+        return userRepository.count();
+    }
 }

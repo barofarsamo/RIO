@@ -134,4 +134,8 @@ public class MovieService {
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
+
+    public long getMovieCount() {
+        return movieRepository.count();
+    }
 }

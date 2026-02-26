@@ -76,11 +76,11 @@ export const movieService = {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    
+
     if (!response.ok) {
       throw new Error('Upload failed')
     }
-    
+
     const data = await response.json()
     return data.url
   },

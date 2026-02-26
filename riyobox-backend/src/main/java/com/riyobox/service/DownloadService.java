@@ -61,7 +61,7 @@ public class DownloadService {
         download.setProgress(progress);
         
         if (progress >= 100) {
-            download.setIsCompleted(true);
+            download.setCompleted(true);
             // Increment movie download count
             movieService.incrementDownloads(download.getMovieId());
         }
@@ -72,7 +72,7 @@ public class DownloadService {
     @Transactional
     public void completeDownload(String id) {
         Download download = getDownloadById(id);
-        download.setIsCompleted(true);
+        download.setCompleted(true);
         download.setProgress(100);
         downloadRepository.save(download);
     }

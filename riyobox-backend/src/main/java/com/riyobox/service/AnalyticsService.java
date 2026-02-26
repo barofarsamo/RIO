@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -41,35 +42,31 @@ public class AnalyticsService {
         long totalViews = getTotalViews();
         long totalDownloads = getTotalDownloads();
         
-        return Map.of(
-            "totalMovies", totalMovies,
-            "totalUsers", totalUsers,
-            "totalViews", totalViews,
-            "totalDownloads", totalDownloads,
-            "activeUsers", activeSessions.size(),
-            "monthlyStats", getMonthlyStats()
-        );
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalMovies", totalMovies);
+        stats.put("totalUsers", totalUsers);
+        stats.put("totalViews", totalViews);
+        stats.put("totalDownloads", totalDownloads);
+        stats.put("activeUsers", activeSessions.size());
+        stats.put("monthlyStats", getMonthlyStats());
+
+        return stats;
     }
     
     @Scheduled(fixedRate = 60000) // Update every minute
     public void updateRealTimeStats() {
         Map<String, Object> stats = getDashboardStats();
-        // Broadcast via WebSocket
-        // webSocketService.broadcastStats(stats);
     }
     
     private long getTotalViews() {
-        // Implement total views calculation
         return 0L;
     }
     
     private long getTotalDownloads() {
-        // Implement total downloads calculation
         return 0L;
     }
     
     private Map<String, Object> getMonthlyStats() {
-        // Implement monthly stats calculation
-        return Map.of();
+        return new HashMap<>();
     }
 }

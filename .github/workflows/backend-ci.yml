@@ -43,7 +43,7 @@ jobs:
           cache: maven
       
       - name: Cache Maven dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -52,7 +52,7 @@ jobs:
       
       - name: Run tests
         run: mvn test -Dspring.data.mongodb.uri=mongodb://localhost:27017/test -Dspring.data.redis.host=localhost
-        working-directory: riyobox-backend   # <-- Folder-ka pom.xml
+        working-directory: riyobox-backend
 
       - name: Build JAR
         run: mvn clean package -DskipTests
@@ -83,7 +83,7 @@ jobs:
           docker tag riyobox-backend:${{ github.sha }} riyobox-backend:latest
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -96,15 +96,9 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/riyobox-backend:latest
       
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+        uses: akhileshns/heroku-deploy@v3.13.15
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           usedocker: true
-      
-      - name: Deploy to AWS ECS
-        if: false # Set to true when AWS is configured
-        run: |
-          echo "Deploying to AWS ECS..."
-          # Add AWS ECS deployment steps here

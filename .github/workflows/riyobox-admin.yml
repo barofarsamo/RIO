@@ -1,0 +1,36 @@
+name: Build and Deploy Riyobox Admin
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'riyobox-admin/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'riyobox-admin/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: riyobox-admin/package.json
+
+    - name: Install dependencies
+      working-directory: riyobox-admin
+      run: npm install
+
+    - name: Build
+      working-directory: riyobox-admin
+      run: npm run build
+      env:
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
