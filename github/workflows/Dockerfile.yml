@@ -1,0 +1,57 @@
+name: CI/CD for Backend with Docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Set up JDK 17 for Maven build
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adoptopenjdk'
+
+    # Cache Maven dependencies to speed up builds
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    # Build the Maven project
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+
+    # Build Docker image
+    - name: Build Docker Image
+      run: |
+        docker build -t riyobox-backend .
+
+    # Run tests in the Docker container
+    - name: Run Backend in Docker Container
+      run: |
+        docker run -d -p 8080:8080 --name riyobox-backend-container riyobox-backend
+        sleep 10 # Allow some time for the application to start
+        curl --fail http://localhost:8080/health || exit 1 # Adjust health check endpoint
+        docker stop riyobox-backend-container
+        docker rm riyobox-backend-container
+
+    # Optionally, you can push the Docker image to Docker Hub or another registry
+    # - name: Push Docker Image to Docker Hub
+    #   run: |
+    #     docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    #     docker push riyobox-backend:latest
