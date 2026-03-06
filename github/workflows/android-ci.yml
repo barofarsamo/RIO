@@ -2,7 +2,7 @@ name: Android CI/CD (Debug APK)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ fix/deployment-and-configuration-2662476944831439978 ]
 
 jobs:
   build-and-deploy:
