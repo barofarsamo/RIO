@@ -27,14 +27,15 @@ class RetrofitClient @Inject constructor(
         // Development
         private const val DEV_BASE_URL = "http://10.0.2.2:8080/api/" // Android emulator localhost
         
-        // Production
-        private const val PROD_BASE_URL = "https://api.riyobox.com/api/"
+        // Production - UPDATE THIS URL WITH YOUR DEPLOYED RENDER BACKEND
+        private const val PROD_BASE_URL = "https://riyobox-backend.onrender.com/api/"
         
         // Staging
         private const val STAGING_BASE_URL = "https://staging.api.riyobox.com/api/"
         
         // Get base URL based on build type
         fun getBaseUrl(): String {
+            // For production builds (assembleRelease), use PROD_BASE_URL
             return if (BuildConfig.DEBUG) DEV_BASE_URL else PROD_BASE_URL
         }
     }

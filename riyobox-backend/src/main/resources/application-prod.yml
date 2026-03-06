@@ -4,8 +4,8 @@ spring:
       uri: ${MONGODB_URI}
     redis:
       host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
 
 server:
   port: ${PORT:8080}
@@ -17,7 +17,7 @@ logging:
     com.riyobox: INFO
     org.springframework: WARN
   file:
-    name: /var/log/riyobox/riyobox.log
+    name: logs/riyobox-prod.log
 
 management:
   endpoints:

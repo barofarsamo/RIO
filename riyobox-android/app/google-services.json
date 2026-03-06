@@ -1,0 +1,28 @@
+{
+  "project_info": {
+    "project_id": "riyobox-dummy-id",
+    "project_number": "1234567890",
+    "storage_bucket": "riyobox-dummy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1234567890:android:riyobox-dummy-id",
+        "android_client_info": {
+          "package_name": "com.riyobox"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "dummy-api-key-riyobox"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
