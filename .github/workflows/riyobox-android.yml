@@ -28,8 +28,18 @@ jobs:
         run: ./gradlew assembleDebug
         working-directory: riyobox-android
 
-      - name: Upload APK
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+        working-directory: riyobox-android
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: riyobox-debug-apk
           path: riyobox-android/app/build/outputs/apk/debug/*.apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: riyobox-release-apk
+          path: riyobox-android/app/build/outputs/apk/release/*.apk
